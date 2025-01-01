@@ -4,5 +4,14 @@ export default {
   theme: {
     extend: {},
   },
-  plugins: [],
+  plugins: [
+    function ({ addUtilities }) {
+      addUtilities({
+        "::selection": {
+          backgroundColor: "#fff",
+          color: "#266b62",
+        },
+      });
+    },
+  ],
 };
