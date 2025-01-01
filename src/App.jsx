@@ -13,9 +13,14 @@ function App() {
     let todoString = localStorage.getItem("todos");
     if (todoString) {
       let todos = JSON.parse(todoString);
-      setTodos(todos);
+      if (Array.isArray(todos)) {
+        setTodos(todos);
+      }
     }
   }, []);
+  useEffect(() => {
+    localStorage.setItem("todos", JSON.stringify(todos));
+  }, [todos]);
 
   const saveToLS = (params) => {
     localStorage.setItem("todos", JSON.stringify(todos));
@@ -72,13 +77,19 @@ function App() {
         <div className="addTodo my-5 flex gap-3 ">
           <input
             onChange={handleChange}
+            onKeyDown={(e) => {
+              if (e.key === "Enter" && todo.trim().length > 3) {
+                handleAdd();
+              }
+            }}
             value={todo}
             type="text"
+            placeholder="Enter your todo"
             className="cursor-pointer w-full rounded-full px-5 py-1 bg-white  focus:bg-green-200 focus:shadow-2xl focus:shadow-white"
           />
           <button
             onClick={handleAdd}
-            disabled={todo.length <= 3}
+            disabled={todo.trim().length <= 3}
             className=" bg-[#266b62] disabled:bg-[#499d92] cursor-pointer text-sm font-bold hover:bg-[#1c524b] p-2 px-3 py-2 text-white rounded-full mx-2">
             Save
           </button>
@@ -97,7 +108,11 @@ function App() {
         <div className="h-[1px] bg-gray-400 my-2"></div>
         <h2 className="text-2xl font-bold">Your Todos</h2>
         <div className="todos">
-          {todos.length === 0 && <div className="m-5">No todos to Display</div>}
+          {todos.length === 0 && (
+            <div className="m-5 font-bold text-xl text-white">
+              No todos to Display
+            </div>
+          )}
           {todos.map((item) => {
             return (
               (showFinished || !item.isCompleted) && (
